@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "assets": [
+    { "id": "background", "path": "assets/background.svg", "width": 720, "height": 1280, "anchor": [0.5, 0.5], "color": "#d9efff", "label": "BACKGROUND" },
+    { "id": "orb", "path": "assets/orb.svg", "width": 160, "height": 160, "anchor": [0.5, 0.5], "color": "#ffcc4d", "label": "TAP" }
+  ]
+}

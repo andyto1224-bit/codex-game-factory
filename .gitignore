@@ -1,0 +1,11 @@
+node_modules/
+dist/
+apps/*/_artifacts/_screenshots/
+templates/*/_artifacts/_screenshots/
+playwright-report/
+test-results/
+.env
+.env.*.local
+*.log
+.DS_Store
+/review.txt

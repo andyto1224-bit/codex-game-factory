@@ -1,0 +1,22 @@
+{
+  "name": "codex-game-factory",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": { "node": ">=22.13.0", "pnpm": ">=11.25.0" },
+  "scripts": {
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "build": "pnpm -r run build",
+    "test:tools": "node --test scripts/__tests__/*.test.mjs",
+    "test:e2e": "pnpm --filter @factory/template-pixi-ts run test:e2e",
+    "review": "node scripts/export-review.mjs"
+  },
+  "devDependencies": {
+    "pnpm": "11.25.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.0"
+  }
+}
