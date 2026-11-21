@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import manifest from '../../assets.manifest.json';
 import type { Scene, SceneContext, Viewport } from '../core/SceneManager';
 
+/** 只负责表现：按 manifest 加载相同路径的资源，正式图替换不改玩法代码。 */
 export class SampleScene implements Scene {
   private orb: Sprite | undefined;
   private backdrop: Sprite | undefined;
@@ -43,6 +44,7 @@ export class SampleScene implements Scene {
     this.backdrop.scale.set(cover);
     this.backdrop.position.set(viewport.width / 2, viewport.height / 2);
   }
+  /** 解除输入与 Tween 后销毁 Sprite；不销毁 Assets 中其他场景可能复用的贴图。 */
   exit(): void {
     if (this.orb) {
       gsap.killTweensOf(this.orb.scale);

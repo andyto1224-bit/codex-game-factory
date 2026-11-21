@@ -16,6 +16,10 @@ function parse(file, source) {
 function visit(root, callback) { callback(root); ts.forEachChild(root, (node) => visit(node, callback)); }
 function lineAt(tree, node) { return tree.getLineAndCharacterOfPosition(node.getStart(tree)).line + 1; }
 
+/**
+ * 审计已构建项目的源码边界、相对 URL、生产调试残留与原始文件字节预算。
+ * 输出 JSON；有违规时抛错令 CLI 非零退出。静态结果不等同于真机性能保证。
+ */
 export async function auditProject(args) {
   const project = await projectPath(args);
   const src = await safePath(project, 'src');
@@ -39,7 +43,7 @@ export async function auditProject(args) {
       if (ts.isTemplateExpression(node) && node.head.text.startsWith('/')) report(file, tree, node, 'Absolute templated URL');
     });
   }
-  // Traverse local dependencies as well, so a state helper cannot smuggle in DOM/engine APIs.
+  // 递归检查 state 的本地依赖，避免通过 helper 间接引入 DOM 或渲染引擎。
   const inspected = new Set();
   const inspectState = async (file) => {
     if (inspected.has(file)) return;
@@ -90,7 +94,7 @@ export async function auditProject(args) {
     if (/\.[cm]?js$/.test(file) && /["'`]\/(?:assets|images|audio|fonts)\//.test(content)) violations.add(`${name} Absolute bundled resource URL`);
     if (/\.json$/.test(file) && /"(?:path|src|url)"\s*:\s*"\//.test(content)) violations.add(`${name} Absolute manifest resource URL`);
   }
-  // Include unbundled HTML/CSS/public assets: Vite does not rewrite public files.
+  // public 文件不会被 Vite 改写，必须连同未打包的 HTML/CSS/清单单独检查。
   const extraFiles = [path.join(project, 'index.html'), ...await walk(src)];
   const publicRoot = await safePath(project, 'public');
   if (await exists(publicRoot)) extraFiles.push(...await walk(publicRoot, []));

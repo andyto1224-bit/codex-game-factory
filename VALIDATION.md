@@ -3,6 +3,11 @@
 日期：2026-11-21（Asia/Shanghai）。工作目录：`D:/Codex-Game-Development-bot`。
 环境：Windows / Node.js v25.2.1 / pnpm 11.25.0。
 
+## 官网与中文文档维护检查（2026-11-21）
+
+本次补充 README、架构/API 与工具手册、贡献说明及关键模块中文注释；在 README 和 package.json 添加 `https://www.rosgames.com/` 官网入口。业务实现和 v1.0.0 标签保持不变。
+`pnpm install --frozen-lockfile`、`pnpm run typecheck`、14 项单测、4 项工具集成测试、`pnpm run build`、模板静态审计及 `git diff --check` 全部通过。新生产 JS 674733 bytes、总产物 679834 bytes，与基线一致；本次未重复浏览器 E2E，以下浏览器结果属于初次母体验收。`pnpm run review` 已重新生成本地审核包。
+
 ## 依赖安装
 
 `pnpm install` 成功，已生成 `pnpm-lock.yaml`。安装时 npm/CDN 曾出现连接重试，最终依赖安装完成。关键解析版本：TypeScript 5.9.3、Vitest 4.1.12、Vite 8.3.8、PixiJS 8.23.0、GSAP 3.15.1、Playwright 1.65.1。
@@ -55,5 +60,5 @@ node scripts/init-project.mjs --name _smoke-test --template pixi-ts --skills puz
 ## 审核导出与交付边界
 
 `pnpm run review` 生成根 `review.txt`，合并根 AGENTS、4 份 pipeline、8 份 skills（共 13 份协议文档）及核心目录树。
-本地 Git 已初始化 main 分支，未创建提交。
+母体初次验收时 Git 已初始化 main 分支；之后已封板为 `09e9a9a`，`v1.0.0` 标签固定此首次提交。当前 `main` 的说明和注释维护通过后续提交交付，准确状态以 Git 历史为准。
 仅 pixi-ts 薄壳已实现；其他引擎为路由规范。mock/web/gd/gm/poki 都使用默认 MockPlatformAdapter；此处只实际验证 web 打包，不宣称集成真实广告 SDK 或上传上线。性能审计覆盖静态规则与体积，真机帧率/内存、真实广告和平台认证仍需具体项目验证。

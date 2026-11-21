@@ -13,6 +13,7 @@ const dictionary = {
   reviveTitle: '再收集一些？', reviveHint: '试玩：模拟激励视频，再获得一次机会。',
   revive: '复活', finish: '结束本局', gameover: '闪耀的一局', retry: '再玩一次', busy: '准备中…',
 };
+// 在组合入口装配平台服务；VITE_PLATFORM 只是目标标记，当前仍是无网络 Mock。
 const platform = new MockPlatformAdapter({ platform: import.meta.env.VITE_PLATFORM ?? 'mock', dictionary });
 const t = (key: keyof typeof dictionary): string => platform.translate(key);
 const canvas = document.querySelector<HTMLCanvasElement>('#game-canvas');
@@ -31,6 +32,7 @@ const scene = new SampleScene(tap);
 function button(action: string, label: string, symbol?: 'play' | 'pause' | 'retry', secondary = false): string {
   return `<button type="button" class="button${secondary ? ' secondary' : ''}" data-action="${action}"${busy ? ' disabled' : ''}>${symbol ? icon(symbol) : ''}${label}</button>`;
 }
+/** 根据纯状态快照呈现五屏，并同步暂停状态；不在渲染函数中结算玩法。 */
 function render(): void {
   const state = session.snapshot();
   const changed = root.dataset.screen !== state.screen;
@@ -73,6 +75,7 @@ function tap(): void {
   if (state.screen === 'gameover') platform.track('game_over', { score: state.score });
   render();
 }
+/** 广告等待期间锁按钮，按结果复活；销毁后到达的异步结果不再更新界面。 */
 async function revive(): Promise<void> {
   if (busy || session.snapshot().screen !== 'revive') return;
   busy = true;
@@ -116,6 +119,7 @@ root.addEventListener('pointercancel', press);
 root.addEventListener('pointerout', press);
 canvas.addEventListener('keydown', key);
 
+/** HMR/页面离开共用释放入口；监听、测试桥、Tween、音频和场景均成对清理。 */
 async function destroy(): Promise<void> {
   if (disposed) return;
   disposed = true;

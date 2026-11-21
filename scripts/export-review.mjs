@@ -14,6 +14,7 @@ async function tree(directory, prefix = '') {
   }
   return output;
 }
+/** 合并总控协议、阶段/skill 文档和目录树，生成不纳入 Git 的 review.txt。 */
 export async function exportReview() {
   const documents = ['AGENTS.md', ...(await walk(path.join(ROOT, 'pipeline'))).filter((file) => file.endsWith('.md')).map((file) => path.relative(ROOT, file)), ...(await walk(path.join(ROOT, 'skills'))).filter((file) => file.endsWith('.md')).map((file) => path.relative(ROOT, file))];
   let output = `codex-game-factory · 人工审核包\n生成时间：${new Date().toISOString()}\n\n===== 核心目录树（排除依赖、构建产物和截图）=====\n${await tree(ROOT)}\n`;

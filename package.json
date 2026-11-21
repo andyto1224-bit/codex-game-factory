@@ -1,6 +1,15 @@
 {
   "name": "codex-game-factory",
   "version": "1.0.0",
+  "description": "ROSGames H5 小游戏开发工具箱：共享内核、引擎薄壳、阶段门禁与跨平台工具链",
+  "homepage": "https://www.rosgames.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andyto1224-bit/codex-game-factory.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andyto1224-bit/codex-game-factory/issues"
+  },
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.25.0",

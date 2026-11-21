@@ -3,6 +3,7 @@ import type { Ticker } from 'pixi.js';
 import { SceneManager } from './SceneManager';
 import type { Viewport } from './SceneManager';
 
+/** Pixi 薄壳：持有画布、背景与安全区容器，集中管理 resize、Ticker 和后台暂停。 */
 export class GameApp {
   readonly pixi = new Application();
   readonly world = new Container();
@@ -17,6 +18,7 @@ export class GameApp {
     this.scenes = new SceneManager({ world: this.world, background: this.background, viewport: this.measure() });
   }
 
+  /** v8 必须等待异步 init，再进入首个场景；DPR 上限 2 避免移动端过量像素。 */
   async init(): Promise<void> {
     await this.pixi.init({
       canvas: this.canvas, antialias: true, autoDensity: true,
@@ -33,11 +35,12 @@ export class GameApp {
     this.syncTicker();
   }
 
+  /** 业务主动暂停与页面隐藏共同决定 Ticker，不会在前台自动覆盖用户暂停。 */
   setPaused(paused: boolean): void { this.paused = paused; this.syncTicker(); }
   private readonly tick = (ticker: Ticker): void => { this.scenes.update(Math.min(ticker.deltaMS / 1000, 0.05)); };
   private readonly visibility = (): void => {
     this.hidden = document.hidden;
-    if (this.hidden) this.onHidden(); // Explicit resume through UI; never override a user pause.
+    if (this.hidden) this.onHidden(); // 进入暂停屏，返回前台后仍由 UI 显式继续。
     this.syncTicker();
   };
   private syncTicker(): void {
@@ -47,8 +50,7 @@ export class GameApp {
     this.pixi.render();
   }
   private measure(): Viewport {
-    // Pixi autoDensity writes inline canvas dimensions during init/resize.
-    // Measure the containing shell so those dimensions cannot feed back into layout.
+    // autoDensity 会写入画布内联尺寸；测量外层 shell，避免旧尺寸反向污染布局。
     const { width, height } = (this.canvas.parentElement ?? this.canvas).getBoundingClientRect();
     const style = getComputedStyle(document.documentElement);
     const inset = (side: string): number => Math.max(0, parseFloat(style.getPropertyValue(`--safe-${side}`)) || 0);
@@ -69,6 +71,7 @@ export class GameApp {
     this.scenes.resize(viewport);
     this.pixi.render();
   };
+  /** 先等待场景清理，再移除 Ticker 和 Pixi 对象；监听绑定与移除必须成对。 */
   async destroy(): Promise<void> {
     if (this.destroyed) return;
     this.destroyed = true;

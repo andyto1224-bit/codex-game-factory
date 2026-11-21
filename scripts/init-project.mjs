@@ -3,6 +3,10 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { ROOT, appPath, assertSlug, cli, contained, exists, isMain, parseArgs, readJson, safePath } from './lib/common.mjs';
 
+/**
+ * 从已验收薄壳建项，保留预先批准的 _artifacts，不覆盖现有源代码。
+ * name 为受限 slug；skills 为逗号分隔的 genres；返回新项目绝对路径。
+ */
 export async function initProject({ name, template = 'pixi-ts', skills = '' }) {
   assertSlug(name);
   if (template !== 'pixi-ts') throw new Error('Only the validated pixi-ts template is installed');
@@ -34,7 +38,7 @@ export async function initProject({ name, template = 'pixi-ts', skills = '' }) {
     await writeFile(path.join(staging, 'AGENTS.md'), `# ${name} · 局部执行协议\n\n先读取并遵守以下规范（均相对此目录）：\n${references.map((file) => `- [${file}](${file})`).join('\n')}\n\n优先级：本项目 _artifacts/*.md > 根 skills/genres/*.md > 根 skills/foundation/*.md > 根 AGENTS.md。\n每次会话只执行一个阶段，按根协议停在人审门禁；不复制 @factory/game-core。所有命令从仓库根运行，--app ${name}。\n`);
     if (!alreadyExists) await rename(staging, target);
     else {
-      // Preserve pre-approved design artifacts in-place; rollback only files we create.
+      // 已批准的工件原地保留；失败时只回滚本次已经移入的文件。
       await mkdir(path.join(target, '_artifacts'), { recursive: true });
       const moved = [];
       try {

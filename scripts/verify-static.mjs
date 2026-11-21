@@ -6,7 +6,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { ROOT, cli, isMain, parseArgs, projectPath, safePath } from './lib/common.mjs';
 
-/** Verify the actual production bytes under a non-root URL, without a dev server. */
+/** 用非根路径托管真实 dist 验收示例流程；新玩法需相应更新按钮和加分断言。 */
 export async function verifyStatic(args) {
   const project = await projectPath(Object.keys(args).length ? args : { project: path.relative(ROOT, process.cwd()) });
   const dist = await safePath(project, 'dist');

@@ -2,7 +2,7 @@ import { rm } from 'node:fs/promises';
 import path from 'node:path';
 import { ROOT, appPath, cli, contained, exists, isMain, readJson } from './lib/common.mjs';
 
-/** Deliberately accepts no user-supplied deletion path. */
+/** 只接受固定的 _smoke-test 并核对包身份；不提供任意路径删除能力。 */
 export async function cleanupSmoke() {
   const target = await appPath('_smoke-test');
   if (!await exists(target)) return;
